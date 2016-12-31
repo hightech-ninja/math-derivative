@@ -31,16 +31,26 @@ vector<int> calc_balance_array(const string& s) {
   return b;
 }
 
-int balance(const vector<int>& b, int l, int r) {
+// [l; r)
+int min_balance(const vector<int>& b, int l, int r) {
   return b[(int)(min_element(b.begin() + l, b.begin() + r) - b.begin())];
+}
+// [l; r]
+int balance(const vector<int>& b, int l, int r) {
+  return (l ? b[r] - b[l] : b[r]);
 }
 
 string remove_outer_brackets(const string& s) {
   vector<int> b = calc_balance_array(s);
   int x = 0;
-  for (; s[x] == '(' && s[s.size() - x - 1] == ')' && x + 1 < (int)s.size() - x - 1  && balance(b, x + 1, s.size() - x - 1) > x; ++x) {
+  for (; s[x] == '(' && s[s.size() - x - 1] == ')' && x + 1 < (int)s.size() - x - 1  && min_balance(b, x + 1, s.size() - x - 1) > x && b[s.size() - x  - 2] == x + 1; ++x) {
   }
   return s.substr(x, s.size() - 2 * x);
+}
+
+string derivative(string s) {
+  s = remove_outer_brackets(s);
+  return s;
 }
 
 int main() {
