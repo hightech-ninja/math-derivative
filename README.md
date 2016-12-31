@@ -1,5 +1,19 @@
-# math-derivative
-The work in mathematical analysis - taking the derivatives of complex functions.
-In working directory you can find file solution.cpp.
-Compile it using the compilation string 'g++ -O2 -fno-stack-limit -x c++
--std=c++11 solution.cpp -o solution'. Solution is ready!
+# Производные
+Работа по математическому анализу. Программа, берущая производные сложной
+функции.
+
+Решением является solution.cpp. Чтобы запустить программу, можно ее
+скомпилировать следующей строкой 'g++ -O2 -fno-stack-limi -x c++ -std=c++11
+solution.cpp -o solution'. После чего использовать исполняемый файл solution.
+
+Программа поддерживает следуюшие операции и функции:
+
+1) '+', '-' - сложение и вычетание (Бинарные);
+2) '*', '/' - умножение и деление;
+3) '**' или '^' - возведение в степень;
+4) Полиномы;
+5) ln - натуральный логарифм;
+6) sin, cos, tg, ctg - тригонометрические функции;
+7) arcsin, arccos, arctg, arcctg - обратные тригонометрические функции;
+
+Автор: Безбородов Ян, Университет ИТМО, ФИТиП, M3139
