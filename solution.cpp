@@ -65,7 +65,6 @@ bool isNumber(const string& s) {
 }
 
 string derivative(string s) {
-  cout << ":\t" << s << endl;
   s = remove_outer_brackets(s);
   int min_b = 100500, cur_b = 0;
   for (int i = 0; i < (int)s.size(); ++i) {
@@ -173,7 +172,7 @@ int main() {
   while (!cin.eof()) {
     getline(cin, s);
     s = python_pow_to_math_pow(remove_places(s));
-    cout << derivative(s) << endl;
+    cout << math_pow_to_python_pow(derivative(s)) << endl;
   }
   return 0;
 }
