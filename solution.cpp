@@ -70,35 +70,68 @@ string derivative(string s) {
   int min_b = 100500, cur_b = 0;
   for (int i = 0; i < (int)s.size(); ++i) {
     if ((s[i] == '+' || s[i] == '-') && cur_b == 0 && min_b >= 0) { // (f +- g)' = f' +- g'
-      return derivative(s.substr(0, i)) + " + " + derivative(s.substr(i + 1, s.size() - i - 1));
+      string plus = "+", minus = "-";
+      return derivative(s.substr(0, i)) + (s[i] == '+' ? plus : minus) + derivative(s.substr(i + 1, s.size() - i - 1));
     }
-    cur_b  += (s[i] == '(' ? 1 : (s[i] == ')' ? -1 : 0));
-    min_b = min(min_b, cur_b);
+    if (s[i] == '(' && i > 0 && 'a' <= s[i - 1] && s[i - 1] <= 'z') {
+      ++i;
+      for (int new_b = 1; i < (int)s.size() && new_b; ++i) {
+        new_b += (s[i] == '(' ? 1 : (s[i] == ')' ? -1 : 0));
+      }
+      --i;
+      continue;
+    }
+    if (s[i] == '(' || s[i] == ')') {
+      cur_b += (s[i] == '(' ? 1 : -1);
+      min_b = min(min_b, cur_b);
+    }
   }
   min_b = 100500, cur_b = 0;
-  for (int i = s.size() - 1; i >= 0; --i) {
+  for (int i = 0; i < (int)s.size(); ++i) {
     if ((s[i] == '*' || s[i] == '/') && cur_b == 0 && min_b >= 0) {
       string f = s.substr(0, i), g = s.substr(i + 1, s.size() - i - 1);
       if (s[i] == '*') { // (fg)' = f'g + fg'
-        return "(" + derivative(f) + ")" + " * " + g + " + " + f + " * (" + derivative(g) + ")";
+        return "(" + derivative(f) + ")" + "*" + g + "+" + f + "*(" + derivative(g) + ")";
       }
       else { // (f/g)' = (f'g - fg')/(g^2)
-        return "(" + derivative(f) + ") * " + g + " - " + f + " * (" + derivative(g) + ")) / " + g + "^2";
+        return "(" + derivative(f) + ")* " + g + "-" + f + "*(" + derivative(g) + ")) / " + g + "^2";
       }
     }
-    cur_b += (s[i] == '(' ? -1 : (s[i] == ')' ? 1 : 0));
+    if (s[i] == '(' && i > 0 && 'a' <= s[i - 1] && s[i - 1] <= 'z') {
+      ++i;
+      for (int new_b = 1; i < (int)s.size() && new_b; ++i) {
+        new_b += (s[i] == '(' ? 1 : (s[i] == ')' ? -1 : 0));
+      }
+      --i;
+      continue;
+    }
+    cur_b += (s[i] == '(' ? 1 : (s[i] == ')' ? -1 : 0));
     min_b = min(min_b, cur_b);
   }
+  min_b = 100500, cur_b = 0;
   for (int i = 0; i < (int)s.size(); ++i) {
     if (s[i] == '^') { // (f^g) = f^g * (g * ln(f))'
       string f = s.substr(0, i), g = s.substr(i + 1, s.size() - i - 1);
-      return f + "^" + g + " * " + derivative(g + "*ln(" + f + ")");
+      return f + "^" + g + "*(" + derivative(g + "*ln(" + f + ")") + ")";
+    }
+    if (s[i] == '(' && i > 0 && 'a' <= s[i - 1] && s[i - 1] <= 'z') {
+      ++i;
+      for (int new_b = 1; i < (int)s.size() && new_b; ++i) {
+        new_b += (s[i] == '(' ? 1 : (s[i] == ')' ? -1 : 0));
+      }
+      --i;
+      continue;
     }
   }
   if (isNumber(s))
     return "0";
   if (s == "x")
     return "1";
+  if (s.size() >= 2 && s.substr(0, 2) == "ln") {
+    string f = s.substr(2, s.size() - 2);
+    cout << "f:\t" << f << endl;
+    return f + "^(-1)*" + "(" + derivative(f) + ")";
+  }
   return "(" + s + ")'";
 }
 
