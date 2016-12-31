@@ -129,8 +129,23 @@ string derivative(string s) {
     return "1";
   if (s.size() >= 2 && s.substr(0, 2) == "ln") {
     string f = s.substr(2, s.size() - 2);
-    cout << "f:\t" << f << endl;
     return f + "^(-1)*" + "(" + derivative(f) + ")";
+  }
+  if (s.size() >= 3 && s.substr(0, 3) == "sin") {
+    string f = s.substr(3, s.size() - 3);
+    return "cos" + f + "*(" + derivative(f) + ")";
+  }
+  if (s.size() >= 3 && s.substr(0, 3) == "cos") {
+    string f = s.substr(3, s.size() - 3);
+    return "(-sin" + f + "*(" + derivative(f) + "))";
+  }
+  if (s.size() >= 2 && s.substr(0, 2) == "tg") {
+    string f = s.substr(2, s.size() - 2);
+    return "cos" + f + "^(-2)*" + derivative(f);
+  }
+  if (s.size() >= 3 && s.substr(0, 3) == "ctg") {
+    string f = s.substr(3, s.size() - 3);
+    return "(-sin" + f + "^(-2)*" + derivative(f) + ")";
   }
   return "(" + s + ")'";
 }
