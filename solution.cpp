@@ -48,9 +48,58 @@ string remove_outer_brackets(const string& s) {
   return s.substr(x, s.size() - 2 * x);
 }
 
+string remove_places(const string& s) {
+  string res;
+  for (int i = 0; i < (int)s.size(); ++i)
+    if (s[i] != ' ')
+      res.push_back(s[i]);
+  return res;
+}
+
+bool isNumber(const string& s) {
+  for (int i = 0; i < (int)s.size(); ++i) {
+    if (!(s[i] >= '0' && s[i] <= '9'))
+      return false;
+  }
+  return true;
+}
+
 string derivative(string s) {
+  cout << ":\t" << s << endl;
   s = remove_outer_brackets(s);
-  return s;
+  int min_b = 100500, cur_b = 0;
+  for (int i = 0; i < (int)s.size(); ++i) {
+    if ((s[i] == '+' || s[i] == '-') && cur_b == 0 && min_b >= 0) { // (f +- g)' = f' +- g'
+      return derivative(s.substr(0, i)) + " + " + derivative(s.substr(i + 1, s.size() - i - 1));
+    }
+    cur_b  += (s[i] == '(' ? 1 : (s[i] == ')' ? -1 : 0));
+    min_b = min(min_b, cur_b);
+  }
+  min_b = 100500, cur_b = 0;
+  for (int i = s.size() - 1; i >= 0; --i) {
+    if ((s[i] == '*' || s[i] == '/') && cur_b == 0 && min_b >= 0) {
+      string f = s.substr(0, i), g = s.substr(i + 1, s.size() - i - 1);
+      if (s[i] == '*') { // (fg)' = f'g + fg'
+        return "(" + derivative(f) + ")" + " * " + g + " + " + f + " * (" + derivative(g) + ")";
+      }
+      else { // (f/g)' = (f'g - fg')/(g^2)
+        return "(" + derivative(f) + ") * " + g + " - " + f + " * (" + derivative(g) + ")) / " + g + "^2";
+      }
+    }
+    cur_b += (s[i] == '(' ? -1 : (s[i] == ')' ? 1 : 0));
+    min_b = min(min_b, cur_b);
+  }
+  for (int i = 0; i < (int)s.size(); ++i) {
+    if (s[i] == '^') { // (f^g) = f^g * (g * ln(f))'
+      string f = s.substr(0, i), g = s.substr(i + 1, s.size() - i - 1);
+      return f + "^" + g + " * " + derivative(g + "*ln(" + f + ")");
+    }
+  }
+  if (isNumber(s))
+    return "0";
+  if (s == "x")
+    return "1";
+  return "(" + s + ")'";
 }
 
 int main() {
@@ -59,7 +108,8 @@ int main() {
   string s;
   while (!cin.eof()) {
     getline(cin, s);
-    cout << remove_outer_brackets(python_pow_to_math_pow(s)) << endl;
+    s = python_pow_to_math_pow(remove_places(s));
+    cout << derivative(s) << endl;
   }
   return 0;
 }
