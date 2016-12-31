@@ -141,11 +141,27 @@ string derivative(string s) {
   }
   if (s.size() >= 2 && s.substr(0, 2) == "tg") {
     string f = s.substr(2, s.size() - 2);
-    return "cos" + f + "^(-2)*" + derivative(f);
+    return "cos" + f + "^(-2)*(" + derivative(f) + ")";
   }
   if (s.size() >= 3 && s.substr(0, 3) == "ctg") {
     string f = s.substr(3, s.size() - 3);
-    return "(-sin" + f + "^(-2)*" + derivative(f) + ")";
+    return "(-sin" + f + "^(-2)*(" + derivative(f) + "))";
+  }
+  if (s.size() >= 6 && s.substr(0, 6) == "arcsin")  {
+    string f = s.substr(6, s.size() - 6);
+    return "(1-" + f + "^2)^(-1/2)*(" + derivative(f) + ")";
+  }
+  if (s.size() >= 6 && s.substr(0, 6) == "arccos") {
+    string f = s.substr(6, s.size() - 6);
+    return "(-(1-" + f + "^2)^(-1/2))*(" + derivative(f) + ")";
+  }
+  if (s.size() >= 5 && s.substr(0, 5) == "arctg") {
+    string f = s.substr(5, s.size() - 5);
+    return "(1+" + f + "^2)^(-1)*(" + derivative(f) + ")";
+  }
+  if (s.size() >= 6 && s.substr(0, 6) == "arcctg") {
+    string f = s.substr(6, s.size() - 6);
+    return "(-(1+" + f + "^2)^(-1))*(" + derivative(f) + ")";
   }
   return "(" + s + ")'";
 }
