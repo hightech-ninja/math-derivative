@@ -166,8 +166,8 @@ string derivative(string s) {
 }
 
 int main() {
-  //freopen("deriv.in", "r", stdin);
-  //freopen("deriv.out", "w", stdout);
+  freopen("deriv.in", "r", stdin);
+  freopen("deriv.out", "w", stdout);
   string s;
   while (!cin.eof()) {
     getline(cin, s);
