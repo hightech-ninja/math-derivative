@@ -64,6 +64,10 @@ bool isNumber(const string& s) {
   return true;
 }
 
+bool isLetter(char c) {
+  return 'a' <= c && c <= 'z';
+}
+
 string derivative(string s) {
   s = remove_outer_brackets(s);
   int min_b = 100500, cur_b = 0;
@@ -93,7 +97,7 @@ string derivative(string s) {
         return "(" + derivative(f) + ")" + "*" + g + "+" + f + "*(" + derivative(g) + ")";
       }
       else { // (f/g)' = (f'g - fg')/(g^2)
-        return "(" + derivative(f) + ")* " + g + "-" + f + "*(" + derivative(g) + ")) / " + g + "^2";
+        return "((" + derivative(f) + ")*" + g + "-" + f + "*(" + derivative(g) + "))/" + g + "^2";
       }
     }
     if (s[i] == '(' && i > 0 && 'a' <= s[i - 1] && s[i - 1] <= 'z') {
@@ -111,7 +115,17 @@ string derivative(string s) {
   for (int i = 0; i < (int)s.size(); ++i) {
     if (s[i] == '^') { // (f^g) = f^g * (g * ln(f))'
       string f = s.substr(0, i), g = s.substr(i + 1, s.size() - i - 1);
-      return f + "^" + g + "*(" + derivative(g + "*ln(" + f + ")") + ")";
+      bool mark = false;
+      for (int i = 0; i < (int)g.size(); ++i) {
+        if ((i == 0 || !isLetter(i - 1)) && (i + 1 == (int)g.size() || !isLetter(i + 1)) && g[i] == 'x') {
+          mark = true;
+          break;
+        }
+      }
+      if (mark)
+        return f + "^" + g + "*(" + derivative(g + "*ln(" + f + ")") + ")";
+      //(f^a)' = a * f^(a - 1) * f'
+      return g + "*" + f + "^(" + g + "-1)" + "*(" + derivative(f) + ")";
     }
     if (s[i] == '(' && i > 0 && 'a' <= s[i - 1] && s[i - 1] <= 'z') {
       ++i;
@@ -162,7 +176,7 @@ string derivative(string s) {
     string f = s.substr(6, s.size() - 6);
     return "(-(1+" + f + "^2)^(-1))*(" + derivative(f) + ")";
   }
-  return "(" + s + ")'";
+  return "(" + s + ")";
 }
 
 int main() {
