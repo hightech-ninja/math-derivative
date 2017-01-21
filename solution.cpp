@@ -58,7 +58,7 @@ string remove_places(const string& s) {
 
 bool isNumber(const string& s) {
   for (int i = 0; i < (int)s.size(); ++i) {
-    if (!(s[i] >= '0' && s[i] <= '9'))
+    if (!((s[i] >= '0' && s[i] <= '9') || s[i] == '.'))
       return false;
   }
   return true;
@@ -112,8 +112,8 @@ string derivative(string s) {
     min_b = min(min_b, cur_b);
   }
   min_b = 100500, cur_b = 0;
-  for (int i = 0; i < (int)s.size(); ++i) {
-    if (s[i] == '^') { // (f^g) = f^g * (g * ln(f))'
+  for (int i = (int)s.size() - 1; i >= 0; --i) {
+    if (s[i] == '^') {
       string f = s.substr(0, i), g = s.substr(i + 1, s.size() - i - 1);
       bool mark = false;
       for (int i = 0; i < (int)g.size(); ++i) {
@@ -124,16 +124,19 @@ string derivative(string s) {
       }
       if (mark)
         return f + "^" + g + "*(" + derivative(g + "*ln(" + f + ")") + ")";
-      //(f^a)' = a * f^(a - 1) * f'
       return g + "*" + f + "^(" + g + "-1)" + "*(" + derivative(f) + ")";
     }
-    if (s[i] == '(' && i > 0 && 'a' <= s[i - 1] && s[i - 1] <= 'z') {
-      ++i;
-      for (int new_b = 1; i < (int)s.size() && new_b; ++i) {
-        new_b += (s[i] == '(' ? 1 : (s[i] == ')' ? -1 : 0));
+    if (s[i] == ')') {
+      int j, new_b;
+      for (j = i - 1, new_b = 1; j >= 0 && new_b; --j) {
+        if (s[j] == ')') ++new_b;
+        else if (s[j] == '(') --new_b;
       }
-      --i;
-      continue;
+      if (isLetter(s[j])) {
+        while (j >= 0 && isLetter(s[j]))
+          --j;
+        i = j + 1;
+      }
     }
   }
   if (isNumber(s))
